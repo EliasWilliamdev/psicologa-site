@@ -1,0 +1,12 @@
+/* Custom overrides: hide video CTAs when inside modals */
+[data-modal="true"] .video-cta {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* keep other global styles (if needed) below */

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Menu, 
   X, 
@@ -159,13 +159,32 @@ const SERVICES_DATA: Service[] = [
   }
 ];
 
+function getYouTubeId(url: string) {
+  if (!url) return null;
+  const re = /(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+  const m = url.match(re);
+  return m ? m[1] : null;
+}
+
+function withAutoplay(url: string) {
+  if (!url) return url;
+  return url.includes('?') ? `${url}&autoplay=1` : `${url}?autoplay=1`;
+}
+
 const App: React.FC = () => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoVisible, setVideoVisible] = useState(false);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    setVideoPlaying(false);
+    setVideoVisible(false);
+  }, [selectedService]);
 
   return (
     <div className="min-h-screen font-['Inter']">
@@ -325,7 +344,7 @@ const App: React.FC = () => {
             A partir dessa conversa inicial, avaliamos juntos se e como posso te ajudar.
           </p>
           <a 
-            href="https://wa.me/5581999999999" 
+            href="https://wa.me/5581999138227" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex bg-[#25D366] text-white px-10 py-4 rounded-2xl font-bold text-lg items-center gap-4 shadow-2xl hover:bg-[#1eb956] transition-all transform hover:-translate-y-2 active:scale-95"
@@ -415,7 +434,7 @@ const App: React.FC = () => {
 
       {/* Service Details Modal */}
       {selectedService && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+        <div data-modal="true" className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-300" onClick={() => setSelectedService(null)}></div>
           <div className="bg-white rounded-[2.5rem] w-full max-w-3xl max-h-[90vh] relative shadow-2xl animate-in zoom-in duration-300 border border-gray-100">
             <button onClick={() => setSelectedService(null)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors z-20 bg-white/50 backdrop-blur-sm rounded-full p-2">
@@ -433,20 +452,7 @@ const App: React.FC = () => {
                 {selectedService.longDescription}
               </div>
 
-              {selectedService.videoUrl && (
-                <div className="mb-14">
-                  <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-widest">Assista ao vídeo e entenda melhor como funciona</p>
-                  <div className="relative rounded-3xl overflow-hidden aspect-video max-w-xl mx-auto border-4 border-white shadow-2xl ring-1 ring-gray-100 bg-black">
-                    <iframe
-                      src={selectedService.videoUrl}
-                      title={selectedService.title}
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
-                  </div>
-                </div>
-              )}
+              {/* Video CTA removed from modal as requested */}
 
               <div className="flex flex-col items-center gap-6">
                 {selectedService.type === 'course' ? (
