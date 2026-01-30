@@ -175,6 +175,25 @@ const App: React.FC = () => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [videoVisible, setVideoVisible] = useState(false);
+  // Form state for contact form (will be sent to WhatsApp)
+  const [formName, setFormName] = useState<string>('');
+  const [formEmail, setFormEmail] = useState<string>('');
+  const [formServiceId, setFormServiceId] = useState<string>('');
+  const [formMessage, setFormMessage] = useState<string>('');
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const phone = '5581999138227';
+    const serviceLabel = SERVICES_DATA.find(s => s.id === formServiceId)?.title || formServiceId || 'Não informado';
+    const text = `Nova mensagem via site:%0ANome: ${formName}%0AE-mail: ${formEmail}%0AServiço de interesse: ${serviceLabel}%0AMensagem: ${formMessage}`;
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(`Nova mensagem via site:\nNome: ${formName}\nE-mail: ${formEmail}\nServiço de interesse: ${serviceLabel}\nMensagem: ${formMessage}`)}`;
+    window.open(url, '_blank');
+    // optional: clear form
+    setFormName('');
+    setFormEmail('');
+    setFormServiceId('');
+    setFormMessage('');
+  };
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -387,27 +406,27 @@ const App: React.FC = () => {
             </div>
 
             <div className="lg:w-1/2 bg-white rounded-3xl border border-gray-100 shadow-2xl p-10 md:p-14">
-              <form className="space-y-6">
+              <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Nome *</label>
-                    <input type="text" placeholder="Seu nome completo" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm outline-none focus:border-[#D37554] focus:ring-4 focus:ring-[#D37554]/5 transition-all" />
+                    <input value={formName} onChange={(e) => setFormName(e.target.value)} type="text" placeholder="Seu nome completo" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm outline-none focus:border-[#D37554] focus:ring-4 focus:ring-[#D37554]/5 transition-all" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">E-mail *</label>
-                    <input type="email" placeholder="seu@email.com" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm outline-none focus:border-[#D37554] focus:ring-4 focus:ring-[#D37554]/5 transition-all" />
+                    <input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} type="email" placeholder="seu@email.com" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm outline-none focus:border-[#D37554] focus:ring-4 focus:ring-[#D37554]/5 transition-all" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Serviço de interesse</label>
-                  <select className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm outline-none cursor-pointer focus:border-[#D37554] transition-all">
-                    <option>Selecione um serviço</option>
+                  <select value={formServiceId} onChange={(e) => setFormServiceId(e.target.value)} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm outline-none cursor-pointer focus:border-[#D37554] transition-all">
+                    <option value="">Selecione um serviço</option>
                     {SERVICES_DATA.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Mensagem *</label>
-                  <textarea rows={5} placeholder="Conte-nos sobre sua necessidade..." className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-sm outline-none focus:border-[#D37554] focus:ring-4 focus:ring-[#D37554]/5 transition-all resize-none"></textarea>
+                  <textarea value={formMessage} onChange={(e) => setFormMessage(e.target.value)} rows={5} placeholder="Conte-nos sobre sua necessidade..." className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-sm outline-none focus:border-[#D37554] focus:ring-4 focus:ring-[#D37554]/5 transition-all resize-none"></textarea>
                 </div>
                 <button type="submit" className="bg-[#D37554] w-full text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-[#b86143] transition-all shadow-xl shadow-[#D37554]/20 text-lg">
                   Enviar Mensagem <Send size={20} />
